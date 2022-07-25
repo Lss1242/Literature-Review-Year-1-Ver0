@@ -1,0 +1,1268 @@
+\documentclass[a4paper,11pt]{report}
+\usepackage[utf8]{inputenc}
+
+\usepackage{enumerate} %Let's us specify how to number enumerations
+\usepackage{graphicx} %enviroemnt for pic
+\usepackage{framed}
+\usepackage{amsmath}
+\usepackage{systeme}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{cite}
+\usepackage{mathrsfs}
+\usepackage{array}
+\usepackage{amsthm} % package used to make the thoeorem environments work.
+\usepackage{subcaption} % ensure subfigure will work
+% code below sets up new theorem environments
+\usepackage[numbers]{natbib}
+\usepackage{mathtools}
+\usepackage{bbm}
+\usepackage{graphicx}
+
+% \usepackage{xcolor}
+\usepackage[table]{xcolor}
+\usepackage[hidelinks]{hyperref}
+  \urlstyle{sf}
+\usepackage{float}
+\definecolor{dodgerblue}{RGB}{30,144,255}
+\definecolor{steelblue}{RGB}{70,130,180}
+\definecolor{darkred}{RGB}{178,34,34}
+\definecolor{forestgreen}{RGB}{34,139,34}
+\hypersetup{
+    colorlinks=true,
+    citecolor=blue, 
+    citecolor=steelblue,
+    linkcolor=forestgreen
+    }
+
+\usepackage[bottom]{footmisc}
+
+\usepackage{tikz} % new environment for diagram
+\usetikzlibrary{matrix}
+
+\usepackage{array,multirow} % new environment for multi rows 
+
+\usepackage{dsfont} % new def of indicator function
+\usepackage{tcolorbox} %new environment for code in box
+\sloppy
+
+
+\PassOptionsToPackage{hyphens}{url}
+\usepackage{hyperref}
+\usepackage[nottoc,numbib]{tocbibind}
+\settocbibname{References}
+
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+
+\usepackage{a4wide} % make pages wider
+
+\usepackage{etoolbox}
+\DeclarePairedDelimiterX{\norm}[1]{\lVert}{\rVert}{#1}
+\bibliographystyle{plainnat}
+\usepackage{cite}
+\theoremstyle{plain} % this sets the style for all new environments created using \newtheorem to have the "plain" style, which as a bold title, italic text and vertical space above and below it. 
+\newtheorem{thm}{Theorem}[section]
+\newtheorem*{thm*}{Theorem}
+\newtheorem{lem}[thm]{Lemma} 
+\newtheorem{prop}[thm]{Proposition} 
+\newtheorem{cor}[thm]{Corollary} 
+\newtheorem*{claim}{Claim} 
+
+\theoremstyle{definition} % this sets the style for all new environments created using \newtheorem to have the "definition" style, which as a bold title, upright text and vertical space above and below it.
+\newtheorem{defn}[thm]{Definition}
+\newtheorem{eg}[thm]{Example}
+\theoremstyle{remark} % this sets the style for all new environments created using \newtheorem to have the "remark" style, which as an italic non-bold title, upright text and no extra vertical space above and below it.
+\newtheorem*{rem}{Remark} 
+\newcounter{casecount}
+\setcounter{casecount}{0}
+\newenvironment{case}{\refstepcounter{casecount} Case \arabic{casecount}:}{}
+\AtBeginEnvironment{proof}{\setcounter{casecount}{0}}
+\usepackage{romannum}
+\newtheorem*{sol}{Solution}
+\newcommand*{\backsubset}{\rotatebox[origin=c]{-180}{$\subset$}}%
+
+
+%% Algorithms Environment
+\usepackage[inoutnumbered,linesnumbered,ruled,vlined]{algorithm2e} % Used for algorithms
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{float} % Used to control the position of algorithms and figures
+\usepackage{datetime} % Changes the date format
+\usepackage{enumitem} % Used to control spaces in itemize
+
+\newcommand{\ocoea}{${(1 + 1)}$~CoEA\xspace}
+
+\newcommand{\shishen}[1]{\textbf{\textcolor{purple}{Shishen: #1}}}
+
+
+\title{Literature Review Year 1}
+\author{Shishen Lin }
+\date{}
+
+\begin{document}
+\pagenumbering{arabic}
+
+\maketitle
+
+\clearpage{\pagestyle{empty}\cleardoublepage}
+\setcounter{page}{0}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{abstract}
+\par The thesis is mainly an expository work of Random matrix theory, in particular its relations with Orthogonal polynomials and Riemann-Hilbert Problems. It also contains a remarkable theorem in Random matrix theory, namely Wigner Semicircle theorem, which roughly states that the eigenvalue distribution of some random matrices (Wigner matrices) tends to a semicircle distribution in long-run behaviour. This thesis will provides two perspectives to investigate why this theorem holds. 
+
+
+\end{abstract}
+
+\cleardoublepage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\tableofcontents 
+
+\chapter{Classical EAs}
+In this chapter, we will properly define basic definitions.  There is one more basic concept. What are runtime and runtime analysis? 
+\par We start with general black box algorithms including EAs and CoEAs. We formulate the Pseudo Code of Black Box Algorithm following A New Framework for the Valuation of Algorithms for Black-Box Optimization \citep{droste_new_nodate} by Droste et al. Assume $f:\{0,1\}^n \rightarrow \mathbb{R}$ is our fitness function (i.e the objective function which we would like to optimise). $S$ is our search space. Within this report, we consider $S$ as $\{0,1\}^n$.
+\begin{algorithm}
+\caption{Black Box Algorithm}
+
+    Compute $w.r.t$ some probability distribution $x_{1}\in S$. Then $f(x_{1})$ is produced.
+    
+    In step $t$ compute $w.r.t$ some probability distribution depending on $(x_{1},f(x_{1})$,\cdots  ,$(x_{t-1},f(x_{t-1}))$ for some $x_{t}\in S$. Then $f(x_{t})$ is produced.
+    
+    Stop if some stopping criterion is fulfilled and output an $x_{i}$ with best $f$-value as result.
+    
+\end{algorithm}
+
+We will properly define basic definitions.  There is one more basic concept. We are interested in the expected optimization time $E(X_{A,f})$, where $X_A,f$ describes the first point of time $t$ such that $x_t$ is $f$-optimal under Algorithm $A$. 
+\begin{defn} (Worst-case runtime \citep{droste_new_nodate})
+For a problem described by the class $F$ of functions, the worst-case expected optimization time of $A$ equals 
+\begin{align*}
+T_{A,F} := \max\{ E(X_{A,f} )|f \in \mathcal{F}\}.
+\end{align*}
+Then we define the black-box complexity of $F$ as the minimum of $T_{A,F}$ over all black-box
+algorithms $A$.
+\end{defn}
+
+We will define runtime and runtime analysis for more specific algorithms.
+
+
+\section{Introduction}
+\par We first formalise a general Evolutionary Algorithm (p30 Ficici's thesis) and a general Co-Evolutionary Algorithm. 
+
+\subsection{(1+1) EAs}
+
+\subsection{Population-Based EAs}
+\par Let us begin with a mathematical model of population-based EAs:
+\begin{algorithm}
+\caption{Basic population-based EA \citep{Per2}}
+    $\mathbf{Require:}$ 
+    \newline A search space $\mathcal{X}$, initial population  $P_{0}\in \mathcal{X}^{\lambda }$, where $\lambda \in \mathbb{N}$ is the population size and a random operator $\mathcal{D}:\mathcal{X}^{\lambda}\rightarrow \mathcal{X}$
+    
+    $P_{0}\sim Unif (\mathcal{X}^{\lambda })$    
+    
+    $\mathbf{for}$ $t=0,1,2, \cdots$ until termination condition met $\mathbf{do}$
+    
+    \quad $\mathbf{for}$ $i=1$ to $\lambda$ $\mathbf{do}$
+    
+    \quad \quad  $P_{t+1}(i)\sim \mathcal{D} (P_{t})$ 
+    
+\end{algorithm}
+
+\begin{defn} (Runtime \citep{Per2}) Given any target subset $B(n)\subset \{0,1\}^n$ (e.g. optima), let 
+\begin{align*}
+    T_{B(n)} := \min_{t\in \mathbb{N}} \{t \lambda  |   
+    P_{t} \cap B(n) \neq 0\}
+\end{align*}
+be the first time the population contains an individual in $B(n)$ where $P_{t}$ denotes set of population. 
+\end{defn}
+
+\begin{rem}
+As we define Runtime, \textit{Runtime Analysis} means that we show how  
+\begin{enumerate}
+    \item $\mathbb{E}[T_{B(n)}]$ - expected runtime for first time arriving target set $B(n)$ 
+    
+    \item $Pr(T_{B(n)}\leq t) $ - the 'success' probability within $t$ steps
+\end{enumerate}
+depend on the mapping $\mathcal{D}$. (Reason why we need expected Rutime Analysis rather than worst case analysis) Here we care about expected runtime rather than runtime itself is due to that normally runtime is a type of stopping time and each process may correspond to a different runtime. It is better to analyse its average runtime and then determine its performance.
+\end{rem}
+
+\section{Generic Algorithms}
+
+\section{Evolutionary Strategies}
+
+\section{Evolutionary Programming}
+
+
+\chapter{Analytic Tools in EAs}
+
+
+\section{Basic Probability Theory}
+\par In order to understand these analytic tool much better, we need some basic Probability theory, which drift analysis and Level-Based Theorem are rooted in. This chapter will mainly follow Cohn's Measure Theory \citep{cohn_measure_2013}, Dr Stefan Adams's notes \citep{adams_ma3k0_nodate} and David's Williams's Probability with martingale \citep{williams1991probability}.
+
+\subsection{Sigma-algebra and Measure}
+\begin{defn}(Algebra and $\sigma$-algebras) Let $\Omega$ be a set and $\mathcal{A}\subset \mathcal{P}(\Omega)$ be a collection of subsets of $\Omega$. 
+\begin{itemize}
+    \item[(1)] $\mathcal{A}$ is an algebra if 
+            \begin{itemize}
+            \item     $\Omega \in \mathcal{A}$;  
+            \item    $A\in \mathcal{A} \Rightarrow A^c \in \mathcal{A}$; 
+            \item  $A,B \in \mathcal{A} \Rightarrow A \cup B \in \mathcal{A}$.
+            \end{itemize}
+
+    \item[(2)] $\mathcal{A}$ is an $\sigma$-algebra if $\mathcal{A}$ is an algebra and $\cup_{n=1}^{\infty} A_{n} \in \mathcal{A}$ for all $(A_{n})_{n\geq 1} \in \mathcal{A}$.
+\end{itemize}
+
+\end{defn}
+
+\begin{eg}
+\begin{itemize}
+    \item[(1)] Borel $\sigma$-algebra, we define it is an $\sigma$-algebra generated by open sets in $\mathbb{R}$, denoted by $\mathcal{B}(\mathbb{R})$. This is an algebra, furthermore an $\sigma$-algebra.
+    \item[(2)] Let $\Omega = \mathbb{N}$, $\mathcal{A}$ be the collection of all subsets of $\Omega$ which are co-finite (i.e. either it is finite or its complement is finite). We claim such $\mathcal{A}$ is an algebra but not an $\sigma$-algebra. Easy to check it is an algebra. To see why it isn't an $\sigma$-algebra, consider $A_{n}=\{\text{even numbers $\leq 2n$} \}\Rightarrow \cup_{n=0}^{\infty} = 2\mathbb{N} $ and $\mathbb{N}\setminus \cup_{n=0}^{\infty} A_{n}=2\mathbb{N}-1 \in \mathcal{A}$. 
+\end{itemize}
+\end{eg}
+
+\begin{rem}$\sigma (\mathcal{A})$ is the $\sigma$-algebra generated by a class $\mathcal{A}$ of subsets of $\Omega$. In other words, 
+\begin{align*}
+    \sigma (\mathcal{A}):=\{A\subset \Omega: A\in \mathcal{F} \text{ for all $\sigma$-algebra $\mathcal{F}$ on $\Omega$ containing $\mathcal{A}$} \}.
+\end{align*}
+One can check $\sigma (\mathcal{A})$ indeed an $\sigma$-algebra and we also have 
+\begin{align*}
+    \sigma (\mathcal{A})= \cap _{\mathcal{A} \subset \mathcal{F} \text{ is $\sigma$-algebra} } \mathcal{F} = \{\text{the smallest of $\sigma$-algebra containing $\mathcal{A}$} \}.
+\end{align*}
+\end{rem}
+
+\begin{defn}(Pre-measure) A pre-measure on $\mathcal{A}$ (i.e. $\mathcal{A}\subset \mathcal{P}(\Omega)$ containing $\emptyset$ is a function $\mu:\mathcal{A}\rightarrow [0,+\infty )$ such that
+\begin{itemize}
+    \item[(1)] $\mu (\emptyset) =0$;
+    \item[(2)] $\mu$ is countably additive i.e. for each infinite sequence $\{A_{n}\}_{n\geq1 }$ of disjoint sets that belong to $\mathcal{A}$, we have 
+    \begin{align*}
+        \mu (\cup_{n=1}^{\infty} A_{n}) = \sum_{n=1}^{\infty} \mu (A_{n})
+    \end{align*}
+\end{itemize}
+\end{defn}
+
+\begin{rem}
+    \begin{itemize}
+        \item[(1)] For any $A,B\in \mathcal{A}$ with $A\subset B \Rightarrow \mu (A) \leq \mu (B)$.
+        \item[(2)] If $\mu (A) < + \infty$, then $\mu (B \setminus A)=\mu (B)- \mu (A)$.
+    \end{itemize}
+\end{rem}   
+
+\begin{defn}(Measure space) A measure space is a triple $(\Omega, \mathcal{F},\mu)$ where $\Omega$ is a set, $\mathcal{F}$ is a $\sigma$-algebra on $\Omega$, $\mu :\mathcal{F}\rightarrow [0,+\infty]$ is a measure. We define $\mu$ is a measure if $\mu$ is a pre-measure on $\sigma$-algebra $\mathcal{F}$.
+
+\end{defn}
+
+\begin{defn}(Type of measure space) Let $(\Omega, \mathcal{F},\mu)$ be a measure space,
+\begin{itemize}
+    \item[(1)] $\mu$ is called fintie if $\mu (\Omega) < \infty$;
+    \item[(2)] $\mu$ is called $\sigma$-finite if there exists a sequence of sets $(E_{n})_{n\geq 1}$ in $\mathcal{F}$ such that $\mu (E_{n})<\infty$ for each $n\in 
+    \mathbb{N}$ and $\cup_{n=1}^{\infty}E_{n}=\Omega$.
+    \item[(3)] $\mu$ is called a probability measure if $\mu (\Omega)=1$ and $(\Omega, \mathcal{F},\mu)$ is called a probability space, usually we use $(\Omega, \mathcal{F},\Pr)$ to denote it.
+\end{itemize}
+\end{defn}
+
+\begin{prop}(Union Bound)  Let $(\Omega, \mathcal{F},\mu)$ be a measure space, $\mu (\cup_{n=1}^{\infty}  A_{n} ) \leq \sum_{n=1}^{\infty} \mu (A_{n})$ for all $A_{n} \in \mathcal{F}$.
+\end{prop}
+
+\begin{proof}
+To be continued ...
+\end{proof}
+
+\begin{defn}(Distribution of $\Pr$ ) Let $\Pr$ be a probability measure on $(\mathbb{R}, \mathcal{B}(\mathbb{R}))$. The distribution is $F:\mathbb{R}\rightarrow [0,+\infty]$, $F(x)= \Pr ((-\infty, x]))$.
+
+\end{defn}
+
+\begin{thm}
+Let $\Omega$ be a set, $\mathcal{A}\subset \mathcal{P}(\Omega)$ a collection of subsets of $\Omega$ and $\mathcal{F}:= \sigma (\mathcal{A})$. If $\mu_{0}:\mathcal{A}\rightarrow [0,+\infty ]$ is a $\sigma$-finite pre-measure, then there exists a measure $\mu$ on $(\Omega, \mathcal{F})$ such that $\mu = \mu_{0}$ on $\mathcal{A}$. Furthermore, if $\mu_{0}(\Omega)< \infty$, then this extension is unique.
+\end{thm}
+
+\begin{rem}This is theorem is Carath\'eodory's extension theorem. With the help of it, we are able to extense any pre-measure to a full measure.
+
+\end{rem}
+
+\subsection{Random variables and Filtration}
+\begin{defn} Suppose $(\Omega, \mathcal{F},\Pr)$ is a probability space and $(\mathbb{R}, \mathcal{B}(\mathbb{R}))$ is a measurable space. A function $X:\Omega \rightarrow \mathbb{R}$ is a random variable if 
+\begin{align*}
+    \forall G \in \mathcal{G}:= \mathcal{B}(\mathbb{R}) \Rightarrow X^{-1}(G) \in \mathcal{F}.
+\end{align*}
+In other words, preimage of every $\mathcal{G}$-measurable set is $\mathcal{F}$-measurable.
+\end{defn}
+
+\begin{defn} ($\sigma$-algebra generated by r.v.s) Suppose $(\Omega, \mathcal{F},\Pr)$ is a probability space and $X$ is a $\mathcal{F}$-measurable r.v.. Then we define the $\sigma$-algebra generated by $X$ is  
+\begin{align*}
+    \sigma (X) = X^{-1}(\mathcal{B}(\mathbb{R}))=\{X^{-1}(A): A \in \mathcal{B}(\mathbb{R}) \} = \sigma (\{X\leq t :t\in \mathbb{R} \}).
+\end{align*}
+Moreover, if $(X_{i}:i\in I)$ is a collection of r.v.s, then the $\sigma$-algebra generated by $(X_{i}:i\in I)$ is 
+\begin{align*}
+    \sigma (X_{i}:i\in I)= \sigma \big( \cup_{i \in I} \sigma (X_{i}) \big)= \sigma (\{X_{i}\leq t: i\in I, t\in \mathbb{R} \}).
+\end{align*}
+
+\end{defn}
+\par Now we would like to define an important concept which will play a role in some later proof.
+
+\begin{defn}(Filtration) A filtration of $\sigma$-algebra on a probability space $(\Omega, \mathcal{F},\Pr)$ is an increasing sequence of $\sigma$-algebra $( \mathcal{F}_{n} )_{n\geq 0}$ such that $\mathcal{F}_{0} \subseteq \mathcal{F}_{1} \subseteq \cdots \subseteq \mathcal{F}_{n} \subseteq \cdots \mathcal{F}$. In this case, $(\Omega, \mathcal{F}, (\mathcal{F}_{n})_{n\geq 0}, \Pr )$ is called a filtered space.
+
+\end{defn}
+
+\begin{defn} (Adapted Stochastic Processes)
+\begin{itemize}
+    \item A discrete-time stochastic process is a sequence $(X_{n})_{n\geq 0 }$ of r.v.s. on a probability space $(\Omega, \mathcal{F},\Pr)$.
+    
+    \item A stochastic process is integrable if for each $n\in \mathbb{N}_{\geq 0}$, we have $X_{n} \in \mathcal{L}(\Omega, \mathcal{F}, \Pr)$ (i.e. $\mathbb{E}[X_{n}]<\infty$ ).
+    
+    \item A stochastic process $(X_{n})_{n\geq 0}$ is adapted to the filtration $(\mathcal{F}_{n})_{n\geq 0}$ if for each $n\in \mathbb{N}_{\geq 0}$, the r.v. $X_{n}$ is $\mathcal{F}_{n}$-measurable.  
+\end{itemize}
+
+\end{defn}
+
+\begin{defn}(Natural filtration) The natural filtration,  $(\mathcal{G}_{n})_{n\geq 0}$ associated with the stochastic process $(X_{n})_{n\geq 0}$ on $(\Omega, \mathcal{F},\Pr)$ is given by $\mathcal{G}_{n}=\sigma (X_{0},\cdots ,X_{n} )= \sigma (\cup_{i=1}^n \sigma (X_{i}))$ for $n\geq 0$.
+
+\end{defn}
+
+\begin{rem} Any stochastic process is automatically adapted to its own filtration.
+
+\end{rem}
+
+\begin{rem} Consider the intuition behind these definitions: the filtration is a way to encode the information contained in the history of a stochastic process and if it is adapted, then all the information about this process is contained in the filtration. 
+\end{rem}
+
+\begin{rem} Normally, $\sigma$-algebras are often considered as containing ``information''. Conditioning on a larger $\sigma$-algebra corresponds to ``knowing more'' about the values of r.v.s. (more things are measurable w.r.t larger $\sigma$-algebra). Often with filtrations, we are thinking about adding r.v.s. to the $\sigma$-algebras over time.
+
+\end{rem}
+
+\begin{eg}For instance, if $X_{1}, X_{2}, \cdots$ is a random walk, then we might have $\mathcal{F}_{n}=\sigma (X_{0},\cdots ,X_{n})$. So we have $\mathcal{F}_{m}\subseteq \mathcal{F}_{n}$ for $\forall m\leq n$. This equivalently means that at time $n$, we ``know more'' about the random walk has done. Then we did at time $m\leq n$.
+
+\end{eg}
+
+\subsection{Conditional Expectation}
+\par Recall given a probability space $(\Omega, \mathcal{F},\Pr)$, $B\in \mathcal{F}$ is an event with $\Pr(B) >0$, then the conditional probability of an event $A\in \mathcal{F}$ is $\Pr(A|B)=\Pr (A\cap B)/ \Pr (B)$. We can naively extend this definition of conditional expectation at the beginning and see how this definition works for conditional expectation.
+
+\begin{rem} $\Pr(A)=\mathbb{E}[\mathbbm{1}_{A}]$ and for $\Pr(B)>0$, we can define
+\begin{align*}
+    \mathbb{E}[X|B]= \int_{\Omega}X(\omega)\Pr[d\omega | B] = \frac{\mathbb{E[X\cdot \mathbbm{1_{B}}]}}{\Pr(B)}
+\end{align*}
+But this definition fails when $\Pr (B) =0$. 
+\end{rem}
+
+\par Next, we introduce an important result in probability theory and it provides us how to construct a formal definition of conditional expectation .
+
+
+\begin{thm} (Kolmogorov, 1933) Let $(\Omega, \mathcal{F},\Pr)$ be a probability space and $X\in \mathcal{L}^1(\Omega, \mathcal{F},\Pr)$ (i.e. $\mathbb{E}[|X|]<\infty$). Let $\mathcal{G}\subseteq \mathcal{F}$ be a sub-$\sigma$-algebra, then there exists a r.v. $Z$ on $(\Omega, \mathcal{F},\Pr)$ such that 
+\begin{itemize}
+    \item[(1)] $\mathbb{E}[Z]<\infty $
+    \item[(2)] $Z$ is $\mathcal{G}$-measurable $(Z:\Omega \rightarrow \mathbb{R}, Z^{-1}(B)\in \mathcal{G}$ $\forall B \in \mathcal{B}(\mathbb{R}) )$.
+    \item[(3)] $\int_{G}Z d \Pr = \int_{G} X d \Pr $ for all $G\in \mathcal{G}$. In other words, $\mathbb{E}[Z\cdot \mathbbm{1}_{G}]=\mathbb{[Z;G]}=\mathbb{E}[X;G]=\mathbb{E}[X\cdot \mathbbm{1}_{G}]$.
+\end{itemize}
+\end{thm}
+
+\begin{defn}(Conditional Expectation) If a random variable $Z$ satisfies $(1)-(3)$ , we say $Z:=\mathbb{E}[X|\mathcal{G}]$, a version of conditional expectation of $X$ given $\mathcal{G}$.
+\end{defn}
+
+\begin{rem} $Z=\mathbb{E}[X|\mathcal{G}]: \Omega \rightarrow \mathbb{R}$ is a random variable. We know exactly which events in $\mathcal{G}$. Equivalently, we know ``information'' in $\mathcal{G}$. Then. we average out over everything else. So $\mathbb{E}[X|\mathcal{G}]$ is ``less random'' than $X$. In this sense, the conditional expectation $\mathbb{E}[X|\mathcal{G}]$ is our ``best guess'' of $X$ given that we know ``information'' in $\mathcal{G}$.
+\end{rem}
+
+\subsection{Martingale}
+
+\subsection{Important Inequalities} In this section,we introduce several useful inequalities that we will frequently use later.
+
+\subsubsection{Hoeffding's inequality and Chernoff Bound}
+
+\subsubsection{Holder Inequality}
+
+\subsubsection{Jensen's Inequality}
+
+
+\section{Basic Drift Analysis}
+
+\subsection{Additive Drift Theorem}
+\par Now we modify $(C1)$ condition a bit weaker by taking $a=0$, we have the following:
+
+\begin{itemize}
+    \item $(C1+)$ For any $k\geq 0$, $\mathbb{E}[Y_{k+1}-Y_{k}+\epsilon_{0};Y_{k}>0| \mathcal{F}_{k} ]\leq 0$
+    
+    \item $(C1-)$ For any $k\geq 0$, $\mathbb{E}[Y_{k+1}-Y_{k}+\epsilon_{0};Y_{k}>0| \mathcal{F}_{k} ]\geq 0$
+\end{itemize}
+
+\begin{rem}
+Note in $(C1-)$, we take a lower bound in order to reach lower bound for expected runtime as follows.
+\end{rem}
+\begin{thm}(Additive Drift Theorem)
+Given a sequence $(Y_{k},\mathcal{F}_{k})$ over an interval $[0,b]\subset \mathbb{R}$. Define $\tau :=\min\{k \geq 0 | Y_{k}=0 \}$ and assume $\mathbb{E}[\tau | \mathcal{F}_{0}]<\infty$. 
+
+\begin{itemize}
+    \item If $(C1+)$ holds for any $\epsilon_{0}>0$, then  $\mathbb{E}[\tau | \mathcal{F}_{0}]\leq Y_{0}/ \epsilon_{0} \leq b / \epsilon_{0}.$
+     \item If $(C1-)$ holds for any $\epsilon_{0}>0$, then  $\mathbb{E}[\tau | \mathcal{F}_{0}]\geq Y_{0}/ \epsilon_{0}.$
+\end{itemize}
+
+\end{thm}
+
+\begin{proof}
+To be continued ... (in PK's notes + key is to use Dominated Convergence Theorem for conditional expectation)
+\end{proof}
+
+\begin{eg} \big((1+1)-EA on LeadingOnes\big)
+
+\end{eg}
+
+\begin{eg} \big((1+1)-EA on Linear Functions\big)
+
+\end{eg}
+
+\subsection{Multiplicative Drift Theorem}
+\par Now we modify $(C1+)$ condition better by multiplying some constant $\delta>0$, we have the following:
+\begin{itemize}
+    \item $(M)$ For any $k\geq 0$, $\mathbb{E}[Y_{k+1}-(1-\delta) Y_{k}; Y_{k}>a| \mathcal{F}_{k} ]\leq 0$
+\end{itemize}
+
+\begin{thm}(Multiplicative Drift Theorem, \citep{lehre_general_2018})
+Given a sequence $(Y_{k},\mathcal{F}_{k})$ over an interval $[a,b]\subset \mathbb{R}$. Define $\tau_{a} :=\min\{k \geq 0 | Y_{k}=a \}$ and assume $\mathbb{E}[\tau_{a} | \mathcal{F}_{0}]<\infty$. 
+\begin{itemize}
+    \item If $(M)$ holds for any $\delta >0$, then  $\mathbb{E}[\tau_{a} | \mathcal{F}_{0}]\leq  \log(Y_{0} / a) / \delta.$
+    \item We have tail bound:
+\end{itemize}
+
+\end{thm}
+\begin{proof}
+To be continued ... (in PK's notes + key is to use Jensen's inequality for conditional expectation + additive drift theorem)
+\end{proof}
+
+\subsection{Hajek's Theorem}
+From Hajek's paper\citep{hajek1982hitting} and Dr Lehre's tutorial \citep{Per}, we have another useful result, which is Hajek's theorem. Now, consider the $(C1)$ and $(C2)$ conditions, we have
+\begin{thm}(Hajek's Theorem) We define $\tau_{a} :=\min\{k \geq 0 | Y_{k}=a \}$ and $\tau_{b} :=\min\{k \geq 0 | Y_{k}=b\}$.  If $(C1)$ and $(C2)$ conditions hold, then for any $\delta \in (0,1)$,
+\begin{align*}
+    Pr(\tau_{b}>B | \mathcal{F}_{0}) \leq e^{\eta( Y_{0}-a-B(1-\delta)\epsilon_{0})} 
+\end{align*}
+and 
+\begin{align*}
+    Pr(\tau_{b} <B | Y_{0}<a) \leq \frac{BD}{(1-\delta)\eta \epsilon_{0}}e^{\eta (a-b)}
+\end{align*}
+for some $\eta \geq \min\{\lambda, \delta \epsilon_{0}\lambda^2 /D \} >0$. 
+\par Furthermore, if $\lambda, \epsilon_{0}, D \in \mathcal{O}(1)$ and $b-a \in \Omega(n)$, then there exists a constant $c>0$ such that 
+\begin{align*}
+Pr(\tau_{b} \leq e^{cn}| \mathcal{F}_{0}) \leq e^{-\Omega(n)}.     
+\end{align*}
+
+\end{thm}
+\begin{proof}
+to be continued ...
+\end{proof}
+\begin{rem}
+This statement here is actually a corollary of the original Hajek's theorem in the paper \citep{hajek1982hitting}. 
+\end{rem}
+
+\subsection{Variable Drift Theorem}
+Following Lehre and Witt's paper \citep{lehre_general_2018}, we have
+
+\subsection{General Tail Bound Analysis}
+
+
+\subsection{Occupation-time Bounds}
+
+
+\section{Artificial Fitness Level Method}
+
+\section{Population Drift}
+\subsection{Population-based Algorithms}
+\par In this chapter, we continue our analysis with Population-Based EA. We will follow Dr Lehre's tutorial \citep{Per2} and paper of Level-based theorem \citep{corus_level-based_2018}. We adapt the formalisation from Dr Lehre's tutorial notes since the algorithm in tutorial is more specific and easy to compare differences between (1+1)-EA and population-based EA. So we formalise our population-based EA as follows. Assume $f:\{0,1\}^n \rightarrow \mathbb{R}$ is our fitnees function (i.e the objective function which we would like to optimise), then the Pseudo Code is as follows:
+\begin{algorithm}
+\caption{Population-based EA}
+$\mathbf{Require:}$ 
+
+\quad A finite state space $\mathcal{X}$, and initial population  $P_{0}\in \mathcal{X}^{\lambda }$, where $\lambda \in \mathbb{N}$ is population size 
+
+\quad \textit{Selection Mechanism} $p_{sel}:\mathcal{X}^{\lambda } \times \mathcal{X} \rightarrow [0,1]$
+
+\quad \textit{Variation Operator} $p_{mul}:\mathcal{X} \times \mathcal{X} \rightarrow [0,1]$
+
+\textbf{for} $t = 0, 1, 2, \cdots$ until termination condition met do
+
+\quad \quad \textbf{for} $i=1$ to $\lambda$ \textbf{do}
+
+ \quad \quad \quad Sample $i$-th parent $x$ according to $p_{sel}(P_{t},\cdot)$
+
+\quad \quad \quad Sample $i$-th offspring $P_{t+1}(i)$ according to $p_{mut}(x,\cdot)$
+
+\quad \quad \textbf{end for}
+
+ \textbf{end for}
+\end{algorithm}
+
+\begin{rem} For selection operators and variation operators, sometimes we use random operator $\mathcal{D}$ to replace them (i.e. sample $P_{t+1}(i) \sim \mathcal{D}(P_{t})$ independently for all $i\in [\lambda]$) so as to generalise our runtime analysis of this EA.  
+
+\end{rem}
+
+\subsection{Defintion}
+\par Generally speaking, Evolutionary algorithms use populations. So far we consider the drift of (1+1)-EA, which is a kind of EA with population size one. Next, we will introduce an important theorem, which helps us to analyse dynamic in population-based EA. So what's the "level"?
+
+\begin{defn}(Level) A tuple $(A_{1}, \cdots ,A_{m})$ is a level-partition of a search space $\mathcal{X}$ if 
+\begin{enumerate}
+    \item $\cup_{j=1}^m A_{j} =\mathcal{X}$ (i.e. this partition is also a cover of $\mathcal{X}$)
+    
+    \item $A_{i} \cap A_{j} = \emptyset$ whenver $i \neq j$ 
+    
+    \item the last component $A_{m}$ covers the optima for the problem
+    
+\end{enumerate}
+
+\par We write $A_{\geq j}$ to denote everything in level $j$ and higher, which is $A_{\geq j}:= \cup_{i=j}^m A_{i}$.
+
+\end{defn}
+\begin{rem} (Notation) For any population $P=(y_{1},\cdots ,y_{\lambda}) \in \mathcal{X}^{\lambda}$ and $j \in [m]$. We define 
+\begin{align*}
+    |P \cap A_{\geq j}| := \# \{i | x_{i} \in A_{\geq j} \}.
+\end{align*}
+In other words, this means the number of individuals of $P$ lying in level $j$ and higher.
+
+\end{rem}
+
+\begin{defn}(Current Level) Given $m$ levels, current level of a population $P$ with respect to $\gamma_{0} \in (0,1)$ is the unique integer $j \in [m-1]$ such that  
+\begin{align*}
+    |P \cap A_{\geq j}| \geq \gamma_{0} \lambda > |P \cap A_{\geq j+1}|
+\end{align*}
+\end{defn}
+
+\subsection{Level-Based Theorem}
+\par Next, we present the statement of this theorem and some trick of applying it first. Then we will give a detailed proof.
+
+\begin{thm}(Level-Based Theorem) Given a partition $(A_{1}, \cdots ,A_{m})$ of $\mathcal{X}$, define the runtime $T:=\min \{ t \lambda |   |P_{t} \cap A_{m}|>0 \}$, where for all $t\in \mathbb{N}$, $P_{t} \in \mathcal{X}^{\lambda}$ is the population of the algorithm above in generation $t$. If there exist $z_{1},\cdots ,z_{m}, \delta \in (0,1]$, and $\gamma_{0} \in (0,1)$ such that for any population $P \in \mathcal{X}^{\lambda}$. If the following conditions holds,
+\begin{enumerate}[(G1)]
+    \item For each level $j\in [m-1]$, if $|P \cap A_{\geq j}| \geq \gamma_{0}\lambda$, then 
+    \begin{align*}
+        Pr_{y \sim \mathcal{D}(P)}( y \in A_{\geq j+1}) \geq z_{j}
+    \end{align*}
+    
+    \item For each level $j\in [m-2]$ and for all $\gamma \in (0,\gamma_{0}]$, if $|P \cap A_{\geq j}| \geq \gamma_{0}\lambda$ and $|P \cap A_{\geq j+1}| \geq \gamma \lambda$, then 
+    \begin{align*}
+        Pr_{y \sim \mathcal{D}(P)}( y \in A_{\geq j+1}) \geq (1+\delta )\gamma
+    \end{align*}
+       
+    \item The population size $\lambda \in \mathbb{N}$ satisfies
+    \begin{align*}
+        \lambda \geq \big(\frac{4}{\gamma_{0} \delta ^2}  \big) \log \big(\frac{128m}{z_{*}\delta ^2 } \big), \quad \text{where $z_{*}:=\min_{j \in [m-1]}\{z_{j}\}$}
+    \end{align*}
+    Then, 
+    \begin{align*}
+        \mathbb{E}[T] \leq \big(\frac{8}{\delta ^2} \big)\sum_{j=1}^{m-1} \big( \lambda \log (\frac{6\delta \lambda}{4+z_{j}\delta \lambda }) + \frac{1}{z_{j}} \big).
+    \end{align*}
+\end{enumerate}
+\end{thm}
+
+\begin{rem} There is some digestion here for this theorem. Notice that this theorem gives us an upper bound on expected runtime until the alogrithm discovers an optima in the last level $A_{m}$, given that certain conditions on random operator $\mathcal{D}$ and population size $\lambda$. Roughly speaking, 
+\begin{enumerate}[(G1)]
+    \item means that it is always possible (or with positive probability) to sample above the current level.
+    
+    \item means that the proportion of the population above the current level increases with positive probability
+    
+    \item means that the total population size is sufficiently large.
+\end{enumerate}
+
+\end{rem}
+
+\begin{proof}
+To be continued ...
+\end{proof}
+
+\subsection{Negative Drift Analysis}
+Our setting up will follow Hajek's paper \citep{hajek1982hitting} and Dr Per Kristian Lehre's notes \citep{Per}.
+
+\subsection{Branching Processes and Applications}
+\par In this part, we properly discuss Branching processes and some of its applications. We will follow from David Williams's book \citep{williams1991probability}, Athreya and Ney's book \citep{athreya2004branching} and Harris's book \citep{harris1963theory}.  So what is a branching process? 
+
+\subsection{Non-selective family tree}
+
+
+\subsection{Negative Drift theorem}
+
+\section{Two Dimensional Drift Analysis}
+
+\chapter{Coevolution - A Brief Overview}
+In this section, we may have a brief overview on 
+
+\section{Category of Co-Evolutionary Algorithms}
+
+\section{Basic Algorithmic Game Theory}
+
+\section{Solution Concepts} 
+% 30 Jun 2020 notes
+In this section, we will follow Edwin D.de Jong's paper \citep{kanade_incremental_2004} and Ficici's Solution Concepts in Coevolutionary Algorithms \citep{ficici_solution_nodate}.
+
+
+\chapter{Cooperative Co-EAs}
+
+\section{Overview on Cooperative Coevolution}
+
+\section{Empirical Analysis on Cooperative CoEAs}
+
+
+\section{Theoretical Analysis on Cooperative CoEAs}
+
+\section{Example: Analysis on Cooperative Coevolutionary (1+1) Evolutionary Algorithms}
+\subsection{(1+1) EA}
+Let us first recall (1+1) EA and compare it with the following CC (1+1) EA.
+
+\begin{algorithm}
+\caption{Basic (1+1) EA}
+
+       Set $p_{m}:=1/n$. \quad \# $p_{m}$ is the mutation probability
+      
+       Choose $randomly$ an initial bit string $x \in \{0,1\}^n$.
+      
+      Repeat the following $mutation$ step:
+        
+     \quad \quad   Compute $x'$ by flipping independently each bit $x_{i}$ with probability $p_{m}$.
+         
+     \quad \quad   Replace $x$ by $x'$ iff $f(x')\geq f(x)$.
+\end{algorithm}
+
+\subsection{(1+1) Cooperative CoEAs}
+
+\par We start with Cooperative Coevolutionary (1+1) Algorithm, which we will write CC-(1+1) EA for short hand within this essay. Let's formalise this CC-(1+1) EA \citep{jansen_cooperative_2004}. We use an even division of a bit string $x=x_{1}\cdots x_{n} \in \{0,1\}^n$ into $k$ blocks $x^{(1)}, \cdots x^{(k)}$ of equal length $l=n/k \in \mathbb{N}$ with $x^{(i)} \in \{0,1\}^l$.
+Let's define a Pseudo-Boolean function $f:\{0,1\}^n \rightarrow \mathbb{R}$.
+
+\begin{algorithm}
+\caption{Cooperative Coevolutionary (1+1) Algorithm \citep{jansen_cooperative_2004}}
+   
+    \textbf{Initialization:}  Independently for each $i \in \{1, \cdots ,k \}$ choose $x_{0}^{(i)} \in \{0,1\}^l$ uniformly random. $t:= -1$;    
+    
+    $a:=1; t:= t+1;$
+    
+    \textbf{Mutation:} Create $y^{(a)}$ by copying $x_{t}^{(a)}$ and independently for each bit, flip this bit with probability $\min\{1/l, 1/2\}$;
+    
+    \textbf{Selection:}  If $f(x_{t+1}^{(1)} \cdots y^{(a)} \cdots x_{t}^{(k)}) \geq f(x_{t+1}^{(1)} \cdots x_{t}^{(a)} \cdots x_{t}^{(k)})$, set $x_{t+1}^{(a)} := y^{(a)}$, else set $x_{t+1}^{(a)} := x_{t}^{(a)}$;
+    
+    $a:=a+1$
+    
+    If $a>k$, then repeat line $2$, else continue at line $3$.
+    
+\end{algorithm}
+
+\begin{comment}
+\begin{algorithm}
+\caption{Cooperative Coevolutionary (1+1) Algorithm}
+    $\mathbf{Require:}$ 
+    
+    \quad A finite state space $\mathcal{X}=\{0,1\}$, and initial population  $P_{0}\in \mathcal{X}^{\lambda }$, where $\lambda = n \in \mathbb{N}$ is population size 
+    
+    \quad \textit{Selection Mechanism} $p_{sel}:\mathcal{X}^{\lambda } \times \mathcal{X}^{l} \rightarrow [0,1]$. 
+    
+    
+    \quad \textit{Mutation Operator} $p_{mul}:\mathcal{X}^l \times \mathcal{X} \rightarrow [0,1]$
+    
+    \textbf{Initialization:}  Independently for each $i \in \{1, \cdots ,k \}$ choose $x_{0}^{(i)} \in \{0,1\}^l$ uniformly random. $t:= -1$;
+    
+    $a:=1; t:= t+1;$
+    
+    \textbf{Mutation:} Create $y^{(a)}$ by copying $x_{t}^{(a)}$ and independently for each bit, flip this bit according to probability $p_{mut}(y,\cdot)= \min\{1/l, 1/2\}$;
+    
+    \textbf{Selection:} Sample $i$-th parent $x$ according to $p_{sel}(P_{t},\cdot)$. In this case, if $f(x_{t+1}^{(1)} \cdots y^{(a)} \cdots x_{t}^{(k)}) \geq f(x_{t+1}^{(1)} \cdots x_{t}^{(a)} \cdots x_{t}^{(k)})$, set $x_{t+1}^{(a)} := y^{(a)}$, else set $x_{t+1}^{(a)} := x_{t}^{(a)}$;
+
+    $a:=a+1$
+    
+    If $a>k$, then repeat line $2$, else continue at line $3$.
+\end{algorithm}
+
+\end{comment}
+
+\begin{comment}
+\begin{tcolorbox}
+$\textbf{Cooperative Coevolutionary (1+1) Algorithm:}$
+
+\bigskip
+$\mathbf{Require:}$ 
+
+\quad A finite state space $\mathcal{X}=\{0,1\}$, and initial population  $P_{0}\in \mathcal{X}^{\lambda }$, where $\lambda = n \in \mathbb{N}$ is population size 
+
+\quad \textit{Selection Mechanism} $p_{sel}:\mathcal{X}^{\lambda } \times \mathcal{X}^{l} \rightarrow [0,1]$. 
+
+
+\quad \textit{Mutation Operator} $p_{mul}:\mathcal{X}^l \times \mathcal{X} \rightarrow [0,1]$
+
+\bigskip
+
+1: \textbf{Initialization:}  Independently for each $i \in \{1, \cdots ,k \}$ choose $x_{0}^{(i)} \in \{0,1\}^l$ uniformly random. $t:= -1$;
+
+2: $a:=1; t:= t+1;$
+
+3: \textbf{Mutation:} Create $y^{(a)}$ by copying $x_{t}^{(a)}$ and independently for each bit, flip this bit according to probability $p_{mut}(y,\cdot)= \min\{1/l, 1/2\}$;
+
+4: \textbf{Selection:} Sample $i$-th parent $x$ according to $p_{sel}(P_{t},\cdot)$. In this case, if $f(x_{t+1}^{(1)} \cdots y^{(a)} \cdots x_{t}^{(k)}) \geq f(x_{t+1}^{(1)} \cdots x_{t}^{(a)} \cdots x_{t}^{(k)})$, set $x_{t+1}^{(a)} := y^{(a)}$, else set $x_{t+1}^{(a)} := x_{t}^{(a)}$;
+
+
+5: $a:=a+1$
+
+6: If $a>k$, then repeat line $2$, else continue at line $3$.
+
+\end{tcolorbox}
+\end{comment}
+
+\begin{comment}
+\begin{rem}
+Both $p_{sel}$ and $p_{mul}$ represent the mechanism probability. In this case, selection mechanism will update each block according to fitness value $f$ until we run through all $k$ blocks. 
+\end{rem}
+
+\end{comment}
+
+\par Before our analysis, there is an important concept ``separable", which first introduced by Jansen and Wiegand \citep{jansen_cooperative_2004}. With the help of separable property, we are able to split our bitstring into several sub-blocks to analyse.
+
+\begin{defn}(Separable functions) A function $f:\{0,1\}^n \rightarrow \mathbb{R}$ is called $(r,s)$-separable, where $r,s\in \{1,2,\cdots ,n\}$ if there exists a partition of $\{1, \cdots ,n\}$ into $r$ disjoint sets $I_{1},\cdots ,I_{r}$ and if there exists a matching number of pseudo-Boolean functions $g_{1},\cdots ,g_{r}$ with $g_{j}:\{0,1\}^{|I_{j}|} \rightarrow \mathbb{R}$ such that 
+\begin{align*}
+   \forall	 x= x_{1}\cdots x_{n} \in \{0,1\}^n:  f(x)= \sum_{j=1}^r g_{j}(x_{i_{j,1}}x_{i_{j,2}}\cdots x_{i_{j,|I_{j}|}} )
+\end{align*}
+holds with $I_{j}=\{i_{j,1}, \cdots , i_{j,|I_{j}|}\}$ and $I_{j}\leq s$ for all $j\in \{1, \cdots ,r\}$.
+\par We say $f$ is \textit{exactly} $(r,s)$-separable if f is $(r, s)$-separable but not $(r', s')$-separable for
+any $r' > r$ or $s' < s$. 
+\end{defn}
+
+\begin{defn} (Separability) Let a function $f:\{0,1\}^n \rightarrow \mathbb{R}$ be exactly $(r,s)$-separable as in the definition above. We define the decomposition of an algorithm matches the separability of this problem (i.e optimising $f$) if all bits that belong to one index set $I_{j}$ are in one population. 
+\par Moreover, we say that the decomposition exactly matches the separability of $f$ if there are $r$ components, each EA operating on the bits contained exactly in one of the index sets $I_{j}$.
+
+\end{defn}
+
+\begin{defn}(Linear function) Functions of the kind $f(x_{1},\cdots ,x_{n})=w_{1}x_{1}+\cdots w_{n}x_{n}$, where $w_{i}\neq 0$.
+
+\end{defn}
+
+\par By comparing classic (1+1)-EA \citep{droste_analysis_2002}, we know the following fact:
+
+\begin{thm}(Expected runtime of (1+1)-EA on linear functions) The expected optimisation time of the (1+1) EA on a linear function $f:\{0,1\}^n \rightarrow \mathbb{R}$ is $\mathcal{O}(n\log n)$. If $f$ only has non-zero weights, the expected optimisation time of the (1+1) EA pn $f$ is $\Theta (n\log n)$.
+
+\end{thm}
+
+\par Now we apply drift analysis tool to analyse this CC-(1+1) EA. The following result is the solution to a conjecture on Jansen and Wiegand's paper \citep{jansen_cooperative_2004}.  For its proof, we first recall a result from Lehre and Witt's paper \citep{lehre_general_2018} without proof. 
+\begin{thm*} The optimization time of the (1+1) EA on an arbitrary linear function with non-zero weights is at least $en \log n -cn -ren$, where $c$ is a constant, with probability at least $1-e^{-r/2}$ for any $r \geq 0$. It is at most $en \log n +(1+r)en + \mathcal{O}(1)$ with probability at least $1-e^{-r}$.
+ 
+\end{thm*}
+
+\par Jansen and Wiegand's paper \citep{jansen_cooperative_2004}. provides its lower bound and my current main contribution is intended to provide its tight upper bound.
+
+\begin{thm}(Expected runtime of CC-(1+1) EA on linear functions)
+The expected optimization time (runtime) of the CC (1+1) EA on a linear function $f: \{0,1\}^n \rightarrow \mathbb{R}$ with only non-zero weights is $\Theta (n\log n).$
+\end{thm}
+
+\begin{proof} Recall the result (theorem 8 in Jansen and Wiegand's paper \citep{jansen_cooperative_2004}), we have a lower bound for this expected runtime: \textbf{The lower bound} for expected optimization time (runtime) of the CC (1+1) EA on a linear function $f: \{0,1\}^n \rightarrow \mathbb{R}$ with only non-zero weights is $\Omega (n\log n)$. 
+\par Next, we explore its upper bound.  Let us apply an even division of a bit string $x=x_{1}\cdots x_{n} \in \{0,1\}^n$ into $k$ blocks $x^{(1)}, \cdots ,x^{(k)}$ of length $\ell :=n/k \in \mathbb{N}$. Rewrite our fitness function:
+\begin{align*}
+f:  \underbrace{\{0,1\}^\ell \times \cdots \times \{0,1\}^\ell}_{\text{$k$ blocks}}     \rightarrow \mathbb{R}
+\end{align*}
+We define $x_\tau^(i)$ to be the number of 1-bits in $i$-th block after $t(\tau)=(\tau -1)k+i$ iterations by $x_{\tau}^{(i)}:=\sum_{n=1}^{\ell} x_{n}^{(i)}$ where $x_{n}^{(i)}$ is each bit in block $i$ and $T^{(i)}:=\min \{ (\tau -1)k+i | x_{\tau}^{i} = \ell\}$. So we can define the overall runtime for the whole CC (1+1) EA, which is $T:=\max_{i\in [k]} T^{(i)}$. Now we apply the above result about tail bound of (1+1) EA on linear functions \citep{lehre_general_2018}. We have
+ \begin{align}
+     \Pr \big(T^{(i)}\leq e\ell \log \ell +(1+r) e\ell +\mathcal{O}(1) \big) \geq 1-e^{-r}. 
+ \end{align}
+Thus,  
+
+\begin{align*}
+    \Pr \big( T>  e\ell \log \ell +(1+r) e\ell +\mathcal{O}(1) \big) & = 1-\Pr \big( T \leq  e\ell \log \ell +(1+r) e\ell +\mathcal{O}(1) \big) \\
+   & = 1-   \Big( \Pr \big(T^{(i)}\leq e\ell \log \ell +(1+r) e\ell +\mathcal{O}(1) \big) \Big)^k  \\
+   & \leq 1 - (1-e^{-r})^k 
+\end{align*}
+The second equality holds due to the independence of each r.v.s. $T^{(i)}$. 
+\par Note $T \in \mathbb{N}_{\geq 0}$ and it is a random variable. Hence for some constant $c$, we have
+\begin{align*}
+    \mathbb{E}[T] = \int_{0}^{\infty} \Pr (T\geq y) dy & = \sum_{t=0}^{\infty}\Pr (T\geq t)\\
+                                                     & \leq \sum_{t=0}^{\floor{e\ell\log (\ell) +e\ell} } \Pr (T>t) + \sum_{\floor{e\ell\log (\ell) +e\ell}+1 }^{\infty} \Pr(T>t) \\
+                                                     & \leq \sum_{t=0}^{\floor{en\log (n) +en} } \Pr(T>t) + \sum_{t=0}^{\infty} \Pr(T>e\ell \log (\ell) +e\ell + t)\\
+                                                     &\leq en\log (n) +en + \sum_{t=0}^{\infty}1-(1-e^{-(t-c)/e\ell})^k \\ \intertext{which follows from inequality above}
+                                                     &\leq en\log (n) +en + \sum_{t=0}^{\infty} 1 -1 + e^{-(t-c)/e\ell} k  \\ \intertext{  follows from Bernoulli's inequality}
+                                                     &=en\log (n) +en + k e^{c/e\ell} \sum_{t=0}^{\infty} (\frac{1}{e^{1/e\ell}})^t \\                         & \leq en \log (n) + en + k\cdot 1\cdot e\ell\\
+                                                     & = en\log n + 2 en \\
+                            &=\mathcal{O}(n\log n).
+\end{align*}
+ To see why the last inequality holds, we notice that  $(\frac{1}{e^{1/e\ell}})^t$ is a decreasing function in variable $t$. So we can apply the integral bound as follows:
+ \begin{align*}
+     \sum_{t=0}^{\infty} (\frac{1}{e^{1/e\ell}})^t & \leq \int_{0}^{\infty} (\frac{1}{e^{1/e\ell}})^t dt \\
+                                                & = (\frac{-e^{(-1/e\ell)t}}{(1/e\ell)} )|_{0}^{\infty} \\
+                                                & = e\ell = \mathcal{O}(\ell).
+ \end{align*}
+\end{proof}
+\begin{rem} We can consider $x_{\tau}^{(i)}$ as $\# \{\text{1-bits in block $i$ after $t(\tau)=(\tau -1)k+i$ iterations}\}$. 
+Moreover, there is an alternative way to see why this last line holds. We compare $n \log n$ and $\frac{1}{1-e^{-1/en}}$. Let $g(x):=x \log x - \frac{1}{1-e^{-1/ex}}$. Consider its derivative, we know that $g$ starts to be an increasing function from $x\geq 1$ and $g(500)\approx 1747 >0$. So $\frac{1}{1-e^{-1/en}} = \mathcal{O}(n\log n)$. As we can see, it is less precise method than above.
+\end{rem}
+
+\par So now we generalise this result for a larger class of separable functions including linear functions. More specifically, the following theorem will then provide a Generalised bound for Expected runtime of CC-(1+1) EA on $(k, n/k)$- separable functions. In this case, we still consider the homogeneous type of separable function, which means that each block is of the same length.
+
+
+\subsection{Homogeneous Separable function}
+\begin{thm}Given a $(k,n/k)$-separable function $f:\{0,1\}^n \rightarrow \mathbb{R}$ where $\ell:=n/k \in \mathbb{N}$, $f=\sum_{i=1}^k g_{i}(x^{(i)})$ with $x^{(i)}\in \{0,1\}^{\ell}$ and $g_{i}:\{0,1\}^{\ell} \rightarrow \mathbb{R}$. If $f$ satisfies the following conditions,
+
+
+\begin{enumerate}
+    \item[(1)] The CC-(1+1) EA's decomposition matches the separability of this problem. 
+    
+    \item[(2)] We define  $T^{(i)}$ to be the runtime of (1+1)EA for problem $g_{i}(x^{(i)})$ on $i$-th block for all $i \in [k]$.  For each $i \in [k]$, there exist $h_{i}(\ell), u_{i}(\ell)>0$ such that 
+    \begin{align*}
+        \Pr \big( T^{(i)}\leq h_{i}(\ell) +r u_{i}(\ell) +\mathcal{O}(1) \big) \geq 1-e^{-r} \quad \text{for any $r>0$}.
+    \end{align*}
+
+Then the expected runtime of CC-(1+1) EA on $f$ is no more than $h(\ell)+ke^{c/u(\ell)}u(\ell)$ for some constant $c$, where $h(\ell)=\max _{i\in [k]} \{h_{i}(\ell)\}$ and $u(\ell)=\max _{i\in [k]} \{u_{i}(\ell)\}$.
+
+\end{enumerate}
+
+\end{thm}
+
+\begin{proof} The idea of this proof inherits from the proof for linear function.  We explore its upper bound.  Let's apply an homogeneous division of a bit string $x=x_{1}\cdots x_{n} \in \{0,1\}^n$ into $k$ blocks $x^{(1)}, \cdots x^{(k)}$ of length $\ell:=n/k \in \mathbb{N}$. Rewrite our fitness function:
+\begin{align*}
+f:  \underbrace{\{0,1\}^{\ell} \times \cdots \times \{0,1\}^{\ell}}_{\text{$k$ blocks}}     \rightarrow \mathbb{R}
+\end{align*}
+Let $x_{\tau}^{(i)}:= \# \{\text{1-bits in block $i$ after $t(\tau)=(\tau -1)k+i$ iterations}\}$ and 
+ $T^{(i)}:=\min \{ (\tau -1)k+i | x_{\tau}^{(i)} = l\}$. So we can define the overall runtime for the whole CC (1+1) EA, which is $T:=\max_{i\in [k]} T^{(i)}$. Now we apply the second condition about the tail bound of (1+1) EA on $(k,n/k)$ separable functions. We have
+     \begin{align*}
+        \Pr \big( T^{(i)}\leq h_{i}(\ell) +r u_{i}(\ell) +\mathcal{O}(1) \big) \geq 1-e^{-r} \quad \text{for any $r>0$}.
+    \end{align*}
+We define $h(\ell)=\max _{i\in [k]} \{h_{i}\}$ and $u(\ell)=\max _{i\in [k]} \{u_{i}\}$. Thus
+\begin{align*}
+    \Pr \big( T>   h(\ell) +r u(\ell) +\mathcal{O}(1) \big) & = 1-\Pr \big( T \leq   h(\ell) +r u(\ell) +\mathcal{O}(1) \big) \\
+   & = 1- \prod_{i=1}^k   \Pr\big(T^{(i)}\leq  h(\ell) +r u(\ell) +\mathcal{O}(1) \big)  \intertext{Due to independence of each r.v.s. $T^{(i)}$} \\
+   & \leq 1-\prod_{i=1}^k   \Pr \big(T^{(i)}\leq  h_{i}(\ell) +r u_{i}(\ell) +\mathcal{O}(1) \big)  \\
+   & \leq 1 - (1-e^{-r})^k 
+\end{align*}
+The last two lines hold due to the events inclusion i.e. $\{T^{(i)}\leq  h_{i}(\ell) +r u_{i}(\ell) +\mathcal{O}(1) \} \subseteq \{ T^{(i)}\leq  h(\ell) +r u(\ell) +\mathcal{O}(1) \} $ for all $i \in [k]$.
+\par Note $T \in \mathbb{N}_{\geq 0}$ and it is a random variable. Hence for some constant $c$, we have
+\begin{align*}
+    \mathbb{E}[T] = \int_{0}^{\infty} \Pr(T\geq y) dy & = \sum_{t=0}^{\infty}\Pr(T\geq t)\\
+                                                     & \leq \sum_{t=0}^{\floor{h(\ell) }} \Pr(T>t) + \sum_{\floor{h(\ell)}+1}^{\infty} \Pr(T>t) \\
+                                                     & \leq \sum_{t=0}^{\floor{h(n)} } \Pr(T>t) + \sum_{t=0}^{\infty} \Pr(T>h(n) +t)\\
+                                                     &\leq h(n) + \sum_{t=0}^{\infty}1-(1-e^{-(t-c)/u(n)})^k \\  \intertext{ Follow from inequality above}
+                                                     &\leq h(n) + \sum_{t=0}^{\infty} 1 -1 + e^{-(t-c)/u(n)} k  \\ \intertext{ Follow from Bernoulli's inequality}
+                                                     &=h(n) + k e^{c/u(n)} \sum_{t=0}^{\infty} (\frac{1}{e^{1/u(n)}})^t \\
+                                                     & \leq h(n)+ke^{c/u(\ell)}u(\ell).
+\end{align*}
+ To see why the last two lines hold, we notice that  $(\frac{1}{e^{1/u(n)}})^t$ is a decreasing function in variable $t$ since $u(n)>0$ for all $n$. So we can apply the integral bound as follows:
+ \begin{align*}
+     \sum_{t=0}^{\infty} (\frac{1}{e^{1/u(n)}})^t & \leq \int_{0}^{\infty} (\frac{1}{e^{1/u(n)}})^t dt \\
+                                                & = (\frac{-e^{(-1/u(n))t}}{(1/u(n))} )|_{0}^{\infty} \\
+                                                & = u(n).
+ \end{align*}
+
+\end{proof}
+\begin{rem}
+Notice that the number of blocks $k$ can be a function of $n$ which is at most of order $n$ since $k \leq n$. We can adjust the number of blocks (or length of blocks) to give different estimates of expected runtime.
+\end{rem}
+
+\begin{rem} This generalisation is certainly closer to a real-world scenario since we can have different expected runtimes on each block of bit string. For example, someone may assume in some blocks, we have {\sc LeadingOnes} problem and in some blocks we have {\sc OneMax} problems. When put them together, they indeed form a separable function. But some block with (1+1) EA on {\sc LeadingOnes} problem  will require $\mathcal{O}(n^2)$ runtime and some block with (1+1) EA on {\sc OneMax} problem  will require $\mathcal{O}(n\log n)$ runtime. How do we make use of the above result to deduce its overall expected runtime? Let's go through a toy case.
+
+\end{rem}
+
+\begin{eg} Consider a $(2,n/2)$-separable function $f:\{0,1\}^{\ell} \times \{0,1\}^{\ell} \rightarrow \mathbb{R}$ where $\ell:=n/2$ and $f=\sum_{i=1}^2 g_{i}(x^{(i)})$ with $x^{(i)}\in \{0,1\}^{\ell}$ and $g_{1}={\sc LeadingOnes}:\{0,1\}^{\ell} \rightarrow \mathbb{R}$; $g_{2}={\sc OneMax}:\{0,1\}^{\ell} \rightarrow \mathbb{R}$. Recall definition of these two functions in Chapter $2$ of the textbook \citep{doerr_theory_2020}, 
+\begin{align*}
+    {\sc LeadingOnes}(x^{(1)}):= \sum_{k=1}^{\ell} \prod_{i=1}^k x_{i}^{(1)} = \# \{ \text{initial one-bits before the first zero bit}\}
+\end{align*}
+and 
+\begin{align*}
+    {\sc OneMax}(x^{(2)}):= \sum_{k=1}^{\ell} x_{i}^{(2)} \quad \text{({\sc OneMax} is a kind of linear functions)}
+\end{align*}
+We borrow the results from paper \citep{lehre_general_2018} by Lehre and Witt and follow the setting from the result above, we have the result about tail bound of (1+1) EA on linear functions (in particular {\sc OneMax}) \citep{lehre_general_2018}:
+ \begin{align}
+     \Pr\big(T^{(2)}\leq e \ell \log \ell +(1+r) e \ell +\mathcal{O}(1) \big) \geq 1-e^{-r}. 
+ \end{align}
+and tail bound for (1+1) EA on {\sc LeadingOnes} is :
+\begin{align*}
+    \Pr\big(T^{(1)}(a) \leq \frac{{\ell}^2}{2} \Big( (1+\frac{1}{\ell -1})^a  -1\big)+ s  \Big) \geq 1-e^{-\Omega (s \ell ^{-3/2})}.
+\end{align*}
+where $T^{(1)}(a)$ (for $0<a\leq \ell -\log \ell$) denotes the time (or number of steps) until a {\sc LeadingOnes}-value of at least $a$ is reached and $s$ is the corresponding parameter. Let $a=n/2$, $u_{1}(n)=n^{\frac{3}{2}}$ and $s= r u_{1}(l) =r l^{\frac{3}{2}}$.  Thus, we have
+\begin{align}
+    \Pr\big(T^{(1)}(\ell/2) \leq \frac{{\ell}^2}{2} \Big( (1+\frac{1}{\ell -1})^{n/2}  -1\big)+  r \ell^{\frac{3}{2}}  \Big) \geq 1-e^{-\Omega (r \ell^{\frac{3}{2}} \ell ^{-3/2})} = 1-e^{-\Omega (r) }.
+\end{align}
+Putting them together, we have the overall expected runtime $T$ bounded by
+\begin{align*}
+    \mathbb{E}[T] &\leq h(\ell)+ke^{c/u(\ell)}u(\ell) \\
+                  & =\max \{ \frac{\ell ^2}{2} \Big( (1+\frac{1}{\ell-1})^a  -1\Big) ,e \ell \log \ell +(1+r) e \ell \} + ke^{c/(\max \{ \ell^{\frac{3}{2}}  ,e\ell\})} \max \{\ell^{\frac{3}{2}}  ,e\ell\} \\
+                  &\leq  \frac{(n/2) ^2}{2} \Big( (1+\frac{1}{\ell-1})^{\ell /2}  -1\Big)+ 2e^{c/\ell ^{3/2} } (n/2)^{3/2}  \\
+                  \intertext{since $\ell -1 \geq \ell /2$ for $\ell \geq 2$,}
+                  & \leq \frac{(n/2) ^2}{2} \Big( (1+\frac{1}{\ell-1})^{\ell -1}  -1\Big)+ 2e^{c/\ell ^{3/2} } (n/2)^{3/2} \\
+                  & \leq \frac{(n/2) ^2}{2} \Big( e  -1\Big)+ 2 \cdot 1 (n/2)^{3/2} \\
+                  & =\mathcal{O}(n^2).
+\end{align*}
+On the other hands, it illustrates that if we consider the case of constant number of blocks, then the overall expected runtime will eventually depend on those blocks which will require most amount of time. 
+\end{eg}
+
+\begin{rem}
+Why do we consider these two functions? Because the {\sc LeadingOnes} problem and {\sc OneMax} problem are classical benchmark problem for evolutionary algorithms. Moreover, Random Local Search (RLS) on {\sc LeadingOnes} has been studied in much greater detail with methods and results that go far beyond drift analysis \citep{doerr_impact_2014}, \citep{ladret_asymptotic_2003}. 
+\end{rem}
+
+\par Next we consider the number of blocks $k$ is a function of length of bitstring $n$. 
+\begin{eg} Consider the case when $k=\floor{\sqrt{n}}$ and each block of length $\ell = \floor{\sqrt{n}}$. We still consider CC-(1+1) EA on the split {\sc LeadingOnes} Problem on each block. Recall the tail bound of (1+1) EA on each block, for $0<a\leq \ell -\log \ell$, we have (2.3) above. Putting them together, we have the overall expected runtime $T$ bounded by
+\begin{align*}
+    \mathbb{E}[T] &\leq h(\ell)+ke^{c/u(\ell)}u(\ell) \\
+                  & =\max \{ \frac{\ell ^2}{2} \Big( (1+\frac{1}{\ell-1})^a  -1\Big) \} + ke^{c/(\max \{ \ell^{\frac{3}{2}} \})} \max \{\ell^{\frac{3}{2}}  \} \\
+                  &\leq  \frac{(\sqrt{n}) ^2}{2} \Big( (1+\frac{1}{\ell-1})^{\ell /2}  -1\Big)+ ke^{c/\ell ^{3/2} } (\sqrt{n})^{3/2}  \\
+                  \intertext{since $\ell -1 \geq \ell /2$ for $\ell \geq 2$,}
+                  & \leq \frac{(\sqrt{n}) ^2}{2} \Big( (1+\frac{1}{\ell-1})^{\ell -1}  -1\Big)+ ke^{c/\ell ^{3/2} } (\sqrt{n})^{3/2} \\
+                  & \leq \frac{n}{2} \Big( e  -1\Big)+ n^{1/2} \cdot 1 \cdot n^{3/4} \\
+                  & =\mathcal{O}(n^{5/4}).
+\end{align*}
+\end{eg}
+
+\par Now recall additive draft theorem.
+
+\begin{thm}(Additive Drift Theorem) Given a sequence $(Y_{k},\mathcal{F}_{k})$ over an interval $[0,b]\subset \mathbb{R}$.  Suppose there are the following conditions:
+\begin{itemize}
+    \item $(C1+)$ For any $k\geq 0$, $\mathbb{E}[Y_{k+1}-Y_{k}+\epsilon_{0};Y_{k}>0| \mathcal{F}_{k} ]\leq 0$
+    
+    \item $(C1-)$ For any $k\geq 0$, $\mathbb{E}[Y_{k+1}-Y_{k}+\epsilon_{0};Y_{k}>0| \mathcal{F}_{k} ]\geq 0$
+\end{itemize}
+Define $\tau :=\min\{k \geq 0 | Y_{k}=0 \}$ and assume $\mathbb{E}[\tau | \mathcal{F}_{0}]<\infty$. 
+
+\begin{itemize}
+    \item If $(C1+)$ holds for any $\epsilon_{0}>0$, then  $\mathbb{E}[\tau | \mathcal{F}_{0}]\leq Y_{0}/ \epsilon_{0} \leq b / \epsilon_{0}.$
+     \item If $(C1-)$ holds for any $\epsilon_{0}>0$, then  $\mathbb{E}[\tau | \mathcal{F}_{0}]\geq Y_{0}/ \epsilon_{0}.$
+\end{itemize}
+
+\end{thm}
+
+
+\begin{eg} We continue to analyse the previous example by using additive drift analysis tool. 
+
+\end{eg}
+
+\subsection{Inhomogeneous Separable function}
+For inhomogeneous spearable functions, we can derive a similar result. 
+\begin{thm}Given an exactly $(k,s)$-separable function $f:\{0,1\}^n \rightarrow \mathbb{R}$  where $r,s\in \{1,2,\cdots ,n\}$ and there exists a partition $\{I_{j}\}_{j\in [k]}$ and a matching number of pseudo-Boolean functions $g_{1},\cdots ,g_{k}$ with $g_{j}:\{0,1\}^{|I_{j}|} \rightarrow \mathbb{R}$ such that 
+\begin{align*}
+   \forall	 x= x_{1}\cdots x_{n} \in \{0,1\}^n:  f(x)= \sum_{j=1}^k g_{j}(x_{i_{j,1}}x_{i_{j,2}}\cdots x_{i_{j,|I_{j}|}} )
+\end{align*}
+holds with $I_{j}=\{i_{j,1}, \cdots , i_{j,|I_{j}|}\}$ and $\ell_{j}:=|I_{j} |\leq s$ for all $j\in \{1, \cdots ,k\}$ with $x^{(j)}\in \{0,1\}^{\ell_{j}}$. If $f$ satisfies the following conditions,
+
+
+\begin{enumerate}
+    \item[(1)] The CC-(1+1) EA's decomposition matches the separability of this problem. 
+    
+    \item[(2)] We define numbers of 1-bits in $i$-th block after $t(\tau)=(\tau -1)k+i$ iterations by $x_{\tau}^{(i)}:=\sum_{n=1}^{\ell_{i}} x_{n}^{(i)}$ where $x_{n}^{(i)}$ is each bit in block $i$ and $T^{(i)}$ is the runtime of (1+1)EA on $i$-th block.  For each $T^{(i)}$, there exist increasing functions $h_{i}(\ell_{i}), u_{i}(\ell_{i})>0$ such that 
+    \begin{align*}
+        \Pr \big( T^{(i)}\leq h_{i}(\ell_{i}) +r u_{i}(\ell_{i}) +\mathcal{O}(1) \big) \geq 1-e^{-r} \quad \text{for any $r>0$}.
+    \end{align*}
+
+Then the expected runtime of CC-(1+1) EA on $f$ is no more than $h(s)+ke^{c/u(s)}u(s)$ for some constant $c$, where $h(s)=\max _{i\in [k]} \{h_{i}(s)\}$ and $u(s)=\max _{i\in [k]} \{u_{i}(s)\}$.
+
+\end{enumerate}
+
+\end{thm}
+
+\begin{rem}
+One may consider $f$ as
+\begin{align*}
+    f: \{0,1\}^{|I_{1}|} \times \cdots \times  \{0,1\}^{|I_{k}|} \rightarrow \mathbb{R}
+\end{align*}
+where $\{I_{j}\}_{j\in [k]}$ are disjoint sets and union is $\{0,1\}^n$ and thus $\sum_{j=1}^k |I_{j}|=n$. It also makes sense to require each $h_{i}(\ell_{i}), u_{i}(\ell_{i})>0$ to be increasing otherwise we will have a tail bound for a deceasing runtime as $n$ increases.  
+\end{rem}
+
+\par Next, we use a diagram to briefly summarize the results from Jansen and Wiegan's paper \citep{jansen_cooperative_2004}.
+
+
+\begin{table}[h]
+\centering
+\begin{tabular}{ |p{3.4cm}| p{3.7cm}| p{3.7cm}| }  
+ \hline 
+ Types of Algorithms and runtime  & CC(1+1) EA  (poly)  &  CC(1+1) EA  (super-poly) \\ 
+ \hline
+(1+1)EA (poly) &
+ \textbf{(1)}Expected runtime for CC-(1+1) EA on $CLOB_{b,k}$ function is $\Theta (k\ell ^b(\ell /b+\log k))$ ; Expected runtime for (1+1) EA on $CLOB_{b,k}$ function is $\Theta (n^b(n/(bk)+\log k))$. In this case, CC (1+1) EA is faster. 
+\newline
+\textbf{(2)}Expected runtime for CC-(1+1) EA on $f_{k,l}$ function is $\Omega(n\ell \cdot \ell ^{1/3})$ ; Expected runtime for (1+1) EA on  $f_{k,l}$ function is $\mathcal{O}(n\ell)$. In this case, (1+1) EA is faster. 
+
+& N/A \\
+ \hline
+ (1+1)EA (super-poly) & 
+
+With probability $1-2^{-\Omega(n^{\epsilon})}$, the runtime for CC (1+1) EA on $f_{\epsilon,\delta}$ is $\mathcal{O}(n^{1+\epsilon} \log n)$; with probability $1-2^{-\Omega(n^{\epsilon})}$, the runtime for (1+1) EA on $f_{\epsilon,\delta}$ is at least $n^{n-2n^{\delta}}$ exponentially. 
+
+&  Expected runtime for CC-(1+1) EA on Trap function is $\infty$; Expected runtime for (1+1) EA on Trap function is $\mathcal{O}( (n/\chi)^n )$. In this case, (1+1) EA is faster.
+ \\
+ \hline
+\end{tabular}
+
+\caption{Comparisons between (1+1) CoEA and (1+1)
+EA}
+
+\end{table}
+
+Where `poly' denotes the algorithm completes in polynomial times and `super-poly' denotes the algorithm completes in non-polynomial times. All the algorithms work on $n$-bit strings. We define $CLOB_{b,k}, f_{k,l}, Trap$ and $f_{\epsilon,\delta}$ functions as follows.
+
+\section{Applications of Cooperative CoEAs}
+
+\chapter{Competitive Co-EAs}
+In this section, we may follow several PhD thesis by Rosin \citep{rosin1997coevolutionary}, Ficici \citep{ficici_solution_nodate} and Popovici \citep{popovici2006analysis} along with some recent research on this area. 
+
+\section{Overview on Competitive CoEAs}
+
+\section{General Framework of Competitive CoEA}
+
+\section{Heuristic Coevolutionary Algorithms}
+According to Rosin's paper \citep{rosin_new_1997}, there are several methods proposed in this paper in order to encourage the competition among each distinct populations and maintain the diversity in each population, which is always important in Evolutionary Computation. There are three methods this paper mainly talked about. Rosin and Belew studied these methods on 3-D Tic-Tac-Toe and Nim test problems. So we can see how competitive CoEA methods helps to accelerate on solving these problems.
+\par While Rosin and Belew \citep{rosin_new_1997} also proposed the infinite population viewpoint. Consider genotypes which preserve fractions of each population and these can be sum up to 1. Each player in the population chooses only one of the two pure strategies. With the framework of Evolutionary Game Theory, assume that fraction $p\in[0,1]$ of players in the population chose to play $s_{1}$. Then, $1-p$ is the proportion of players in the population that played $s_{2}$. Essentially, we already assumed the population size is infinite so that $p$ can be any value between $0$ and $1$. By plugging it in the replicator equation, we have a dynamical approach to analyse the trajectory of the algorithms. But they also point out the drawback of this approach is that first we assume no genotype will go extinct due to sampling error. (Summarize the second reasons page 4 in Rosin ...). Additionally, Tino et al. \citep{tino_complex_2013} used a different approach and concept (shadowing property and lemma) to illustrate that the real trajectory cannot be covered in a $\epsilon$-tube around a pseudo-trajectory which represents a trajectory based on infinite population size.
+\par In order to keep all key characteristics / features of coevolution in a finite population setting, Rosin and Belew proposed the following methods:
+
+\subsection{Competitive Fitness Sharing}
+\begin{defn}We define an optimal solution as one that defeats all possible opponents. A teaching set is a set of individuals that works together by having, for each possible non-optimal opponent, at least one individual in the set capable of defeating that opponent.
+\end{defn}
+\par Goldberg and Richardson \citep{goldberg1987genetic} proposed a kind of measure which is called simple fitness. In fitness sharing, a sharing function can be defined to take into account similarity (according to some metric, like Hamming distance) among individuals.
+\begin{defn}(Simple fitness) An individual's simple fitness is the value that divided by the sum of its similarities with each other individual in the population.
+\end{defn}
+
+\par In Rosin and Belew's work, they tried to introduce the concept of competition into this fitness sharing.
+
+\begin{defn}(Competitive Fitness Sharing)
+We denote one of the population by parasite and the other one is called host. Each parasite is treated as an independent resource to be shared by those hosts in the population that can defeat it. The fitness assigned to a host defeating parasites with the set of indices $X$ is given by $\sum_{j\in X}\frac{1}{N_{j}}$, where $N_{j}$ is the total number of hosts in the population defeating parasite $j$. 
+
+\end{defn}
+\begin{rem} Fitnesses can be comparable if all hosts compete against the same set of parasites. This is usually how we set up the experiment.
+
+\end{rem}
+
+\shishen{Is it a better way to describe this example?}
+\begin{eg} Denote a host type by $G$ and a subset of parasites denoted by $I$, an outcome function defined by $f:\mathcal{G}\times I \rightarrow \mathbb{R}$. We can easily define that a host $g$ defeats a parasite $i$ if $f(g,i)>0$. Consider a case that $G$ defeats $I$ parasites which no other host type can defeat, while the other host types defeat a greater amount of parasites on average. In population of host $\mathcal{G}$, type $G$ is significant since it contains important information about defeating parasites that no others can. Assume $G$ only had a small number of representatives in the population, according to simple fitness, $G$ would have a below-average fitness and then with a relatively high probability, this may go distinct. However, if under competitive fitness sharing, individuals in type $G$ will reach substantially greater fitness since $I$ fitness will be divided among a small number of individuals. So $G$ still has a good chance to be selected.
+\end{eg}
+
+\par As we mentioned, important genotypes like $G$ are never lost in infinite population model while competitive fitness sharing helps ensure that they are not lost in finite population approximation. While such a method needs a greater number of diverse niches supporting.
+
+\subsection{Shared Sampling}
+
+
+\subsection{Hall of Fame}
+
+\subsection{Phantom Parasite}
+
+\subsection{Brood Selection}
+
+\newpage
+\section{Methods for guaranteed progress in CoEAs}
+As described in work of De Jong \citep{kanade_incremental_2004}, there are at least three main characteristics that determine the practical value of the archive:
+\begin{itemize}
+    \item $\mathbf{Generality:}$ how an archive can guarantees progress for which kinds of coevolution or in other words it means the scope of this archive method;
+    
+    \item $\mathbf{Sensitivity:}$ An archive is sensitive if it is able to detect small improvements in the quality of learners. This property applies to both learners and tests. The property of sensitivity necessarily depends on the solution concept.
+    
+    \item $\mathbf{Efficiency:}$ An archive is efficient if it consumes a limited amount of resources, notably computation time and storage capacity.
+
+\end{itemize}
+\subsection{Archive-Based Method}
+In this section, we will focus on a general method to guarantee the convergence of general CoEAs at the cost of relatively high time complexity. The first thing we would like to talk about is Incremental Pareto-Coevolution Archive method \citep{kanade_incremental_2004}.
+\par In the discussion, we consider two populations. We call Population $\mathcal{X}$ as learners, which are individuals whose performance we want to optimize and call Population $\mathcal{Y}$ as tests which are individuals are used for testing. We define an outcome function to be a function assign a real non-negative value $G(x_{0},y_{0})$ at learner $x_{0}$ for test case $y_{0}$ or in other words $G:\mathcal{X}\times \mathcal{Y}\rightarrow \mathbb{R}_{\geq 0}$. So this outcome value can be used to measure the performance of each learner in different test case. Notice that in this case, we consider `Pareto optimal' as our solution concept in coevolution. Now, we define dominace relation first, which provides a way to compare different learners.
+
+\begin{defn}(Dominance relation on learners) 
+\begin{enumerate}
+    \item $x_{1}\succeq_G x_{2}$ if $G(x_{1},y_{j})\geq G(x_{2},y_{j})$ for all $y_{j} \in \mathcal{Y}$;
+    \item $x_{1}\nsucceq_{G} x_{2}$ if there exist $y_{1},y_{2} \in \mathcal{Y}$ such that $G(x_{1},y_{1})\geq G(x_{2},y_{1})$ but $G(x_{1},y_{2})< G(x_{2},y_{2})$.
+\end{enumerate}
+
+\end{defn}
+
+\shishen{Here we provide a graph for this case and this will be a better illustration}
+\begin{eg}Consider $\mathcal{Y}$ consists of two individuals
+
+\end{eg}
+\par Next, we define a monotonic progress properly.
+
+\begin{defn}(Solve) We say that a learner $x$ solves a test set $S$ if $G(x,\cdot)>0$ for each test of this set.
+
+\end{defn}
+
+\begin{defn}(Monotonic Progress) Consider a learner archive over time $L^{1},\cdots ,L^{t}$ and a test archive over time $T^{1}, \cdots ,T^{t}$. Consider $L^{t}, L^{t'},T^{t}, T^{t'}$, we say a monotic progress is guaranteed if $\forall t'>t$, 
+\begin{enumerate}
+    \item For $\forall TS\subseteq T^{t} $, $\exists L \in L^{t}: Solve(L,TS) \implies \exists L' \in L^{t'}: Solve(L',TS)$  
+    \item For $\exists TS\subseteq T^{t'} $, $\nqexists L \in L^{t}: Solve(L,TS) \implies \exists L' \in L^{t'}: Solve(L',TS)$  
+\end{enumerate}
+\end{defn}
+
+\begin{defn}(Strictly useful/useful-tests) A new learner is useful w.r.t. a set of learners $LS$ and a set of tests $TS$ if $L$ is not dominated by any element $L' \in LS$ and $\nqexists L' \in LS \text{ s.t. } \forall T\in TS, G(L,T)=G(L',T)$. We also define a function useful-test which generates a subset of $TG$ satisfies the property above and denoted by $useful-test(TG,T^{t}, LG, L^{t})$ where $TG$ denotes a new generation of tests and $LG$ denotes a new generation of learners.
+\end{defn}
+
+
+\subsection{Ideal Evaluation Method}
+
+
+
+
+\newpage
+
+\section{Empirical Analysis on Competitive CoEAs}
+
+\section{Theoretical Analysis on Competitive CoEAs}
+\subsection{Free Lunch Theorem in CoEAs}
+In this section, we will follow the discussion Wolpert and Macready's work \citep{wolpert_coevolutionary_2005} on Coevolutionary Free Lunches, which shows that indeed under some circumstances, coevolution could be very helpful and we get the `free lunch'!
+
+\subsection{Runtime Analysis of CoEAs}
+
+\subsection{Dynamical Approach on CoEAs}
+Accoding to papers by Peter et al.,
+
+%\section{Coevolution Approach in continuous space}
+
+\subsection{Diversity analysis on Coevolution}
+
+\section{Example of CoEAs: Basic (1+1) type CoEAs}
+In this chapter, we discuss the basic competitive (1+1) Co-EA. Let's define a Pseudo-Boolean function $h:\mathcal{X}^{\lambda} \times \mathcal{Y}^{\lambda}   \rightarrow \mathbb{R}$. For the solution concept for this Co-EA, we choose Nash equilibrium. This is exactly the solution to the Maxmin problem. Then we consider Maxmin problem, which is 
+\begin{align*}
+  \text{find $(x_{*},y_{*} )$ such that }  h(x_{*},y_{*})=  \max_{x} \min_{y} h(x,y).
+\end{align*}
+In this case, we still consider competitiveness in our selection mechanism. 
+
+\begin{algorithm}
+\caption{\ocoea with Pairwise Dominance I}
+\label{alg:ocoea1}
+$\mathbf{Require:}$  A finite state space $\mathcal{X}=\{0,1\}$, and initial populations  $P_{0}, Q_{0}\in \mathcal{X}^{\lambda }$, where $\lambda = n \in \mathbb{N}$ is population size and mutation rate $\theta \in (0,n]$ 
+
+\textit{Selection Mechanism} $p_{sel}:\mathcal{X}^{\lambda } \times \mathcal{X}^{l} \rightarrow [0,1]$. 
+
+
+\textit{Mutation Operator} $p_{mul}:\mathcal{X}^l \times \mathcal{X} \rightarrow [0,1]$.
+
+
+\textbf{Initialization:}  Independently Sample $P_{0} \sim Unif(\mathcal{X}^{\lambda })$; Sample $Q_{0} \sim Unif(\mathcal{X}^{\lambda })$; 
+
+\textbf{Mutation:} Create $x',y'$ by independently flipping each bit in $x,y$ respectively according to probability $p_{mut}(y,\cdot)= \min\{\theta/n, 1/2\}$;
+
+\textbf{Selection:} Sample $i$-th parent $x$ according to $p_{sel}(P_{t},\cdot)$.
+
+
+%5:\quad \quad $y'= mutate(y)$;
+
+\quad \quad \quad  \textbf{If} $h(x,y') \leq h(x,y)$:
+
+\quad  \quad \quad \quad    \textbf{then} $y:= y'$; 
+
+\quad \quad \quad  \textbf{else}: 
+
+\quad  \quad \quad \quad     \textbf{then} $y:= y$;
+
+%10:\quad \quad  $x'= mutate(x)$;
+
+\quad \quad \quad \textbf{If} $h(x',y) \geq h(x,y)$:
+    
+\quad  \quad \quad \quad     \textbf{then} $x:= x'$; 
+
+\quad \quad \quad  \textbf{else}: 
+
+\quad  \quad \quad \quad     \textbf{then} $x:= x$; 
+
+\quad  \quad \quad \textbf{end if}
+
+\quad  \quad \quad  \textbf{Set} $P_{0}:=x$;  $Q_{0}:=y$
+
+\end{algorithm}
+
+
+\begin{comment}
+\begin{tcolorbox}
+$\textbf{Competitive Coevolutionary (1+1) Algorithm:}$
+
+$\mathbf{Require:}$ 
+
+\quad A finite state space $\mathcal{X}=\{0,1\}$, and initial populations  $P_{0}, Q_{0}\in \mathcal{X}^{\lambda }$, where $\lambda = n \in \mathbb{N}$ is population size and mutation rate $\theta \in (0,n]$ 
+
+\quad \textit{Selection Mechanism} $p_{sel}:\mathcal{X}^{\lambda } \times \mathcal{X}^{l} \rightarrow [0,1]$. 
+
+
+\quad \textit{Mutation Operator} $p_{mul}:\mathcal{X}^l \times \mathcal{X} \rightarrow [0,1]$.
+
+
+1: \textbf{Initialization:}  Independently Sample $P_{0} \sim Unif(\mathcal{X}^{\lambda })$; Sample $Q_{0} \sim Unif(\mathcal{X}^{\lambda })$; 
+
+2: \textbf{Mutation:} Create $x',y'$ by independently flipping each bit in $x,y$ respectively according to probability $p_{mut}(y,\cdot)= \min\{\theta/n, 1/2\}$;
+
+4: \textbf{Selection:} Sample $i$-th parent $x$ according to $p_{sel}(P_{t},\cdot)$.
+
+
+%5:\quad \quad $y'= mutate(y)$;
+
+5:\quad \quad \quad  \textbf{If} $h(x,y') \leq h(x,y)$:
+
+6:\quad  \quad \quad \quad    \textbf{then} $y:= y'$; 
+
+7:\quad \quad \quad  \textbf{else}: 
+
+8:\quad  \quad \quad \quad     \textbf{then} $y:= y$;
+
+%10:\quad \quad  $x'= mutate(x)$;
+
+9:\quad \quad \quad \textbf{If} $h(x',y) \geq h(x,y)$:
+    
+10:\quad  \quad \quad \quad     \textbf{then} $x:= x'$; 
+
+11:\quad \quad \quad  \textbf{else}: 
+
+12:\quad  \quad \quad \quad     \textbf{then} $x:= x$; 
+
+13:\quad  \quad \quad \textbf{end if}
+
+14:\quad  \quad \quad  \textbf{Set} $P_{0}:=x$;  $Q_{0}:=y$
+
+\end{tcolorbox}
+
+\end{comment}
+
+\newpage
+There is another similar (1+1) CoEA by Hevia Fajardo via personal communication, which is as follows:
+\begin{algorithm}
+\caption{\ocoea with Pairwise Dominance II}
+\label{alg:ocoea2}
+Sample $x\sim\mathrm{Unif}(\{0,1\}^n)$\\
+Sample $y\sim\mathrm{Unif}(\{0,1\}^n)$\\
+\For{$t \in \{1,2,\dots\}$}
+	{
+	Obtain $x'$ by flipping each bit in $x$ with prob. $\chi/n$.\\
+	Obtain $y'$ by flipping each bit in $y$ with prob. $\chi/n$.\\
+    \uIf{$(x',y')\succeq_g(x,y)$}{$(x,y):=(x',y')$}
+}
+\end{algorithm}
+
+
+Now we start runtime analysis of this algorithm.
+
+\section{Applications of Competitive CoEAs}
+\subsection{Competitive Coevolutions on GANs}
+
+
+
+
+\chapter{Future Research}
+Our setting up will follow Hajek's paper \citep{hajek1982hitting} and Dr Per Kristian Lehre's notes \citep{Per}.
+
+
+\chapter{Conclusion}
+
+\chapter{Appendix}
+\section{Types of distance functions}
+\par In order to apply the drift analysis, first thing which comes to our minds is to choose a `right' drift. Then we present some useful distance functions which may be used later on.
+
+\subsection{Minkowski Distance}
+\par Suppose in a norm space $(V,\lVert \cdot \rVert)$, we define the Minkowski distance:
+\begin{align*}
+    d(x,y) = \big( \sum_{i=1}^n |x_{i} - y_{i}|^p  \big)^{1/p}
+\end{align*}
+where $x,y \in V$. This is also called $L_{p}$-norm distance. It certainly satisfies triangle inequality as well.
+
+
+\subsection{Manhattan Distance} 
+\par  Suppose in a norm space $(V,\lVert \cdot \rVert)$, we define the Manhattan Distance:
+\begin{align*}
+    d(x,y) = \sum_{i=1}^n |x_{i} - y_{i}|  
+\end{align*}
+where $x,y \in V$. Notice it is the case when we set $p=1$ in the Minkowski distance.
+
+\subsection{Euclidean Distance}
+\par Suppose in a norm space $(V,\lVert \cdot \rVert)$, we define Euclidean distance:
+\begin{align*}
+    d(x,y) = \big( \sum_{i=1}^n |x_{i} - y_{i}|^2  \big)^{1/2}
+\end{align*}
+where $x,y \in V$.  Notice it is the case when we set $p=2$ in the Minkowski distance.
+
+\subsection{Hamming Distance}
+\par Suppose in a search space of bit strings $(\{0,1\}^n,\lVert \cdot \rVert_{1})$, we define Hamming Distance \citep{doerr2019theory}:
+\begin{align*}
+    H(x,y) = \sum_{i=1}^n \mathbbm{1}_{ \{x_{i}\neq y_{i} \} }=\# \{i\in [n] | x_{i}\neq y_{i}  \} 
+\end{align*}
+where $x,y \in \{0,1\}^n$.  Hamming distance is a metric for comparing two binary data strings and computes the number of bit positions in which the two bits are different.
+
+\par There are more different kinds of distance functions that we can define. The Rule of Thumb is to characterise the trajectory about how the algorithms work and how they converge to the optimum after iterations.  
+
+\section{Game Theory}
+
+\subsection{Algorithmic Game Theory}
+
+\subsection{Evolutionary Game Theory}
+
+
+
+\bibliography{References2}
+
+\end{document}
